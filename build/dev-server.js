@@ -14,6 +14,46 @@ var port = process.env.PORT || config.dev.port
 var proxyTable = config.dev.proxyTable
 
 var app = express()
+
+// ******  appData = require('../data.json'); 依赖模块data.json
+// **
+var appData = require('../data.json');
+var seller = appData.seller;
+var goods = appData.goods;
+var ratings = appData.ratings;
+
+// *** 这里的express 是node的功能，express.Router()是node的路由功能，
+var apiRouters = express.Router();
+
+// 获取到seller数据
+apiRouters.get('/seller',function (req, res) {
+  res.json({
+    errer: 0,
+    data: seller
+  });
+});
+
+// 获取到goods数据
+apiRouters.get('/goods',function(req, res){
+  res.json({
+    error: 0,
+    data: goods
+  })
+});
+
+//获取到ratings数据
+apiRouters.get('/ratings',function (req, res) {
+  res.json({
+    error: 0,
+    data: ratings
+  })
+});
+
+// app.use() 参数表示 /api/apiRouters，测试方法是，locahost:8080/api/seller
+app.use('/api',apiRouters);
+
+
+
 var compiler = webpack(webpackConfig)
 
 var devMiddleware = require('webpack-dev-middleware')(compiler, {
