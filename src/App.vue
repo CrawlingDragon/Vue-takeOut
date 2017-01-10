@@ -9,18 +9,18 @@
         <a v-link="{path:'/ratings'}" href="">评论</a>
       </div>
       <div class="tab-item">
-        <a v-link="{path:'seller'}" href="">商家</a>
+        <a v-link="{path:'/seller'}" href="">商家</a>
       </div>
     </div>
     <router-view></router-view>
   </div>
 </template>
-<script>
-// 引入组件 header 来自header.vue 文件
+<script type="text/ecmascript-6">
+  // 引入组件 header 来自header.vue 文件
   import header from './components/header/header.vue';
   export default {
     components: {
-    // 注册header组件
+      // 注册header组件
       'v-header': header
     }
   };
@@ -35,5 +35,5 @@
       line-height: 40px
       .tab-item
         flex: 1
-        text-align :center
+        text-align: center
 </style>
