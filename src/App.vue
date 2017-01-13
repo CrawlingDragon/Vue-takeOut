@@ -26,12 +26,15 @@
         seller: {}
       };
     },
-    created() { // 生命周期被创建的时候
-      this.$http.get('/api/seller').then((response) => {    // vue-resourse的方法
-        response = response.body; // reponse.body 就是数据本身
+    // 生命周期被创建的时候
+    created() {
+      // vue-resourse的方法
+      this.$http.get('/api/seller').then((response) => {
+        // reponse.body 就是数据本身
+        response = response.body;
         if (response.errer === ERR) {
-          this.seller = response.data; // 把数据的data赋值给上面函数data() {} 的seller
-          console.log(this.seller);
+          // 把数据的data赋值给上面函数data() {} 的seller
+          this.seller = response.data;
         }
       });
     },

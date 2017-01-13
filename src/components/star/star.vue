@@ -18,25 +18,25 @@
         type: Number
       }
     },
-    computed: {
-      starType() {
+    computed: {   // vue的计算属性
+      starType() {  // 指定starType = 根据size形成不同的class，来区分48 36 24的尺寸
         return 'star-' + this.size;
       },
-      itemClasses() {
+      itemClasses() {                                 // itemClass 在数组中循坏，也是每个星的class
         let result = [];
-        let score = Math.floor(this.score * 2) / 2;
-        let hasDecimal = score % 1 !== 0;
-        let integer = Math.floor(score);
-        for (let i = 0; i < integer; i++) {
+        let score = Math.floor(this.score * 2) / 2;  // 分数的向下取整到0.5
+        let hasDecimal = score % 1 !== 0;           // 判断是否有余数，余数只会是0.5
+        let integer = Math.floor(score);            // 向下取整，代表全星的个数
+        for (let i = 0; i < integer; i++) {         // 循坏全星的个数，为数组添加itemClass
           result.push(CLS_ON);
         }
-        if (hasDecimal) {
+        if (hasDecimal) {                           // 如果有余数，就添加半星
           result.push(CLS_HALF);
         }
-        while (result.length < LENGTH) {
+        while (result.length < LENGTH) {            // 如果添加完全星和半星之后，数组的长度还是小于总数，就把全无星添加到数组
           result.push(CLS_OFF);
         }
-        return result;
+        return result;                              // 最后返回数组
       }
     }
   };
