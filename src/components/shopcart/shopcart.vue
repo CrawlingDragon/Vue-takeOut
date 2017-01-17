@@ -3,22 +3,73 @@
     <div class="content">
       <div class="content-left">
         <div class="logo-wrapper">
-          <div class="logo">
-            <span class="icon-shopping_cart"></span>
+          <div class="logo" :class="{'highlight':totalCount>0}">
+            <span class="icon-shopping_cart" :class="{'highlight':totalCount>0}"></span>
+            <span class="num" v-show="totalCount>0">{{totalCount}}</span>
           </div>
         </div>
-        <div class="price">￥{{delivery-price}}</div>
-        <div class="desc">另需配送费￥10元</div>
+        <div class="price" :class="{'highlight':totalCount>0}">￥{{totalPrice}}</div>
+        <div class="desc">另需配送费￥{{deliveryPrice}}元</div>
       </div>
-      <div class="content-right">
-        ￥{{seller.minPrice}}元起送
+      <div class="content-right" :class="payClass">
+        {{payDesc}}
       </div>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  export default {};
+  export default {
+    props: {
+      selectFoods: {
+        type: Array,
+        default() {
+          return [];
+        }
+      },
+      deliveryPrice: {
+        type: Number,
+        default: 0
+      },
+      minPrice: {
+        type: Number,
+        default: 0
+      }
+    },
+    computed: {
+      totalPrice() {
+        let total = 0;
+        this.selectFoods.forEach((food) => {
+          total += food.price * food.count;
+        });
+        return total;
+      },
+      totalCount() {
+        let count = 0;
+        this.selectFoods.forEach((food) => {
+          count += food.count;
+        });
+        return count;
+      },
+      payDesc() {
+        if (this.totalPrice === 0) {
+          return `￥${this.minPrice}起送`;
+        } else if (this.totalPrice < this.minPrice) {
+          let dif = this.minPrice - this.totalPrice;
+          return `还差￥${dif}起送`;
+        } else {
+          return '去付款';
+        }
+      },
+      payClass() {
+        if (this.totalPrice < this.minPrice) {
+          return 'not-enough';
+        } else {
+          return 'enough';
+        }
+      }
+    }
+  };
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
@@ -52,10 +103,30 @@
             border-radius: 50%
             background: #2b343c
             text-align: center
+            &.highlight
+              background: rgb(0, 160, 220)
+            .num
+              position: absolute
+              top: 0
+              right: 0
+              width: 24px
+              height: 16px
+              line-height: 16px
+              text-align: center
+              -webkit-border-radius: 16px
+              -moz-border-radius: 16px
+              border-radius: 16px
+              font-size: 9px
+              font-weight: 700
+              color: #fff
+              background: rgb(240, 20, 20)
+              box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4)
             .icon-shopping_cart
               line-height: 44px
               font-size: 24px
               color: #80858a
+              &.highlight
+                color: #fff
         .price
           display: inline-block
           vertical-align: top
@@ -67,6 +138,8 @@
           font-weight: bold
           color: rgba(255, 255, 255, 0.4)
           border-right: 1px solid rgba(255, 255, 255, 0.1)
+          &.highlight
+            color: #fff
         .desc
           display: inline-block
           vertical-align: top
@@ -82,4 +155,11 @@
         line-height: 48px
         color: rgba(255, 255, 255, 0.4)
         font-weight: 700
+        background: #2b333b
+        &.not-enough
+          background: #2b333b
+        &.enough
+          background-color: #00b43c
+          color: #fff
+
 </style>
