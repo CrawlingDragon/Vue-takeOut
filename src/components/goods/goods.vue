@@ -39,7 +39,8 @@
         </li>
       </ul>
     </div>
-    <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+    <shopcart v-ref:shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice"
+              :min-price="seller.minPrice"></shopcart>
   </div>
 
 </template>
@@ -85,6 +86,17 @@
           }
         }
         return 0;
+      },
+      selectFoods() {
+        let foods = [];
+        this.goods.forEach((good) => {
+          good.foods.forEach((food) => {
+            if (food.count) {
+              foods.push(food);
+            }
+          });
+        });
+        return foods;
       }
     },
     methods: {
@@ -119,11 +131,23 @@
         let foodslist = this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
         let el = foodslist[index];  // 通过索引找到相应的dom结构
         this.foodsScroll.scrollToElement(el, 300);  // better-scroll的滚动功能
+      },
+      _drop(target) {
+      	// 体验优化 ，异步执行下落动画
+        this.$nextTick(() => {
+          // 执行shopcart组件里定义的drop方法
+          this.$refs.shopcart.drop(target);
+        });
       }
     },
     components: {
       shopcart,
       cartcontrol
+    },
+    events: {
+      'cart.add'(target) {  // 由父组件接收到了cartcontrol组件传过来的cart.add事件
+        this._drop(target); // methods执行这个函数
+      }
     }
   };
 </script>
