@@ -15,7 +15,7 @@
         <li v-for="item in goods" class="food-list food-list-hook">
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="food in item.foods" class="food-item border-1px">
+            <li v-for="food in item.foods" class="food-item border-1px" @click="selectedFood(food, $event)">
               <div class="icon">
                 <img :src="food.icon" alt="" width="57" height="57">
               </div>
@@ -42,13 +42,14 @@
     <shopcart v-ref:shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice"
               :min-price="seller.minPrice"></shopcart>
   </div>
-
+  <food :food="selectedFoods" v-ref:food></food>
 </template>
 
 <script type="text/ecmascript-6">
   import BScroll from 'better-scroll';
   import shopcart from 'components/shopcart/shopcart';
   import cartcontrol from 'components/cartcontrol/cartcontrol.vue';
+  import food from 'components/food/food.vue';
   const ERR_OK = 0;
   export default {
     props: {
@@ -60,7 +61,8 @@
       return {
         goods: [],
         ListHeight: [],
-        scrollY: 0
+        scrollY: 0,
+        selectedFoods: {}
       };
     },
     created() {
@@ -112,6 +114,13 @@
           this.scrollY = Math.abs(Math.round(pos.y)); // pos.y坐标实时赋值给scrollY
         });
       },
+      selectedFood(food, event) {
+        if (!event._constructed) {
+          return;
+        }
+        this.selectedFoods = food;
+        this.$refs.food.show();   // 调用子组件的show() 方法
+      },
       _calculateHeight() {
         let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook'); //  获取食物列表下的所有li
         let height = 0;
@@ -133,8 +142,7 @@
         this.foodsScroll.scrollToElement(el, 300);  // better-scroll的滚动功能
       },
       _drop(target) {
-      	// 体验优化 ，异步执行下落动画
-        this.$nextTick(() => {
+        this.$nextTick(() => { // 体验优化 ，异步执行下落动画
           // 执行shopcart组件里定义的drop方法
           this.$refs.shopcart.drop(target);
         });
@@ -142,7 +150,8 @@
     },
     components: {
       shopcart,
-      cartcontrol
+      cartcontrol,
+      food
     },
     events: {
       'cart.add'(target) {  // 由父组件接收到了cartcontrol组件传过来的cart.add事件
